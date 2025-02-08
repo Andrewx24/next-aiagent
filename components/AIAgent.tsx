@@ -37,7 +37,11 @@ export function AIAgent() {
       setResult(data.result)
     } catch (error) {
       console.error("Error:", error)
-      setError("An error occurred while processing your request.")
+      const errorMessage =
+        error instanceof Error && error.message === "Failed to process the task"
+          ? "An error occurred while processing your request."
+          : "The AI service is not properly configured. Please try again later."
+      setError(errorMessage)
     } finally {
       setIsLoading(false)
     }

@@ -57,8 +57,15 @@ export function AIChatbot() {
       setMessages((prev) => [...prev, assistantMessage])
     } catch (error) {
       console.error("Error:", error)
-      const errorMessage: Message = { role: "assistant", content: "An error occurred. Please try again." }
-      setMessages((prev) => [...prev, errorMessage])
+      const errorMessage =
+        error instanceof Error && error.message === "Failed to get a response"
+          ? "An error occurred. Please try again."
+          : "The AI service is not properly configured. Please try again later."
+      const assistantMessage: Message = {
+        role: "assistant",
+        content: errorMessage,
+      }
+      setMessages((prev) => [...prev, assistantMessage])
     } finally {
       setIsLoading(false)
     }

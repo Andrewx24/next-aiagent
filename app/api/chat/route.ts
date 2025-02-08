@@ -4,20 +4,28 @@ import { streamText } from "ai"
 export async function POST(req: Request) {
   const { message } = await req.json()
 
+  if (!process.env.OPENAI_API_KEY) {
+    return new Response(JSON.stringify({ error: "OpenAI API key not configured" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    })
+  }
+
   try {
-    const result = await streamText({
-      model: openai("gpt-4-turbo"),
+    const result = streamText({
+      model: openai("gpt-3.5-turbo"),
       messages: [{ role: "user", content: message }],
     })
 
-    const text = result
+    const text = await result.text
 
     return new Response(JSON.stringify({ reply: text }), {
       headers: { "Content-Type": "application/json" },
     })
   } catch (error) {
     console.error("Error:", error)
-    return new Response(JSON.stringify({ error: "An error occurred" }), {
+    const errorMessage = (error as any).message || "An error occurred while processing your request"
+    return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     })

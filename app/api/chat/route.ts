@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     })
   } catch (error) {
     console.error("Error:", error)
-    const errorMessage = (error as any).message || "An error occurred while processing your request"
+    const errorMessage = (error as Error).message || "An error occurred while processing your request"
     return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
